@@ -1,5 +1,4 @@
 numpy
 ultralytics
 opencv-python
-deep_sort_realtime
 lap

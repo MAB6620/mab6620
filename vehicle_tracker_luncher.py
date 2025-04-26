@@ -51,7 +51,7 @@ def main(args: Args):
     print(f"Overridden args: {args.overridden_args()}")
     # Initialize the tracker
     tracker = VehicleTracker(params={
-        TrackingParams.MODE.key : TrackingMode.FAST
+        TrackingParams.MODE.key : TrackingMode.BALANCED
     })
 
     src_file_path = os.path.join(args.dataset_folder_name, args.video_file_to_process)
@@ -105,7 +105,7 @@ def main(args: Args):
         if args.draw_fps:
             
             fps = fps * 0.45 + (1 / (end_time - start_time) + 1e-6) * 0.5
-            cv2.putText(frame, f'[{frame_index}] FPS: {fps:.2f}, objects: {number_objects}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+            cv2.putText(frame, f'[{frame_index}] FPS: {fps:.1f}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
 
         for vehicle in vehicles:
             number_objects = number_objects if number_objects > vehicle.id else vehicle.id

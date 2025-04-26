@@ -2,6 +2,13 @@
 ### Vehicle Tracker
 This project implements a vehicle tracking system using YOLOv8 for object detection and DeepSort for tracking. It processes video files to detect and track vehicles (cars and trucks), outputting a video with bounding boxes and IDs for each tracked vehicle.
 
+[![Vehicle Tracker - I](https://img.youtube.com/vi/SN6ZytJcNc8/0.jpg)](https://www.youtube.com/watch?v=SN6ZytJcNc8)
+
+---
+
+[![Vehicle Tracker - II](https://img.youtube.com/vi/UETNU8oZRCw/0.jpg)](https://www.youtube.com/watch?v=UETNU8oZRCw)
+
+
 **Features**
 
  - Supports multiple tracking modes: Fast, Balanced, Accurate, and Slow-and-Accurate.
