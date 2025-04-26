@@ -29,10 +29,12 @@ class Args:
     """Path to the video file to process"""
     video_output_file_name: str = "output_video.mp4"
     """Path to the output video file"""
-    video_output_folder_name: str = "dataset"
+    video_output_folder_name: str = "output"
     """Path to the output video folder"""
     draw_fps: bool = True
     """Whether to draw FPS on the video"""
+    different_colors: bool = True
+    """Whether to use different colors for each vehicle"""
     scale_factor: float = 1.0
     """Scale factor for resizing the video frames"""
 
@@ -58,7 +60,10 @@ def main(args: Args):
         print(f"File {src_file_path} does not exist.")
         return
 
-    output_file_path = os.path.join(args.video_output_folder_name, f"{args.video_file_to_process}_{args.video_output_file_name}")
+    
+    src_file_name = os.path.splitext(args.video_file_to_process)[0]
+
+    output_file_path = os.path.join(args.video_output_folder_name, f"{src_file_name}_{args.video_output_file_name}")
     if os.path.exists(output_file_path):
         print(f"Output file: '{output_file_path}' will be overwritten.")
         
@@ -106,7 +111,10 @@ def main(args: Args):
         for vehicle in vehicles:
             number_objects = number_objects if number_objects > vehicle.id else vehicle.id
             x1, y1, x2, y2 = vehicle.bbox
-            random.seed(int(vehicle.id))
+            
+            if args.different_colors:
+                random.seed(int(vehicle.id))
+
             color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
             cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
             cv2.putText(frame, f"vehicle: {vehicle.id}, conf: {vehicle.confidence:0.2f}", (x1, y1 - 10),

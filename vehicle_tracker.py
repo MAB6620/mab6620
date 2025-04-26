@@ -39,8 +39,30 @@ class TrackingParams(StrEnum):
     # TRACKING_NMS_MAX_DETECTIONS = "tracking_nms_max_detections"
     # TRACKING_NMS_IOU = "tracking_nms_iou"
 
+    def default(self) -> float:
+        if self == TrackingParams.MODE:
+            return TrackingMode.SLOW_AND_ACCURATE
+        elif self == TrackingParams.MODEL_FOLDER:
+            return "models"
+        elif self == TrackingParams.TRACKING_MAX_AGE:
+            return 30
+        elif self == TrackingParams.CUSTOM_MODEL_NAME:
+            return None
+        elif self == TrackingParams.TRACKING_CONFIDENCE:
+            return 0.5
+        elif self == TrackingParams.TRACKING_NMS:
+            return 0.5
+        elif self == TrackingParams.VERBOSE:
+            return False
+        else:
+            raise ValueError(f"Unknown parameter: {self}")
+
     def key(self) -> str:
         return self.value
+    
+    @classmethod
+    def all(cls):
+        return list(map(lambda c: c, cls))      
 
 
 class Vehicle:
@@ -72,7 +94,7 @@ class Vehicle:
 class VehicleTracker:
     def __init__(self, params:dict = None):
         self.params = params or {}
-        mode = TrackingMode(self.params.get(TrackingParams.MODE.key, TrackingMode.SLOW_AND_ACCURATE))
+        mode = TrackingMode(self.params.get(TrackingParams.MODE.key, TrackingMode.BALANCED))
         model_folder = self.params.get(TrackingParams.MODEL_FOLDER.key, "models")
 
         # Choose YOLO model based on mode
@@ -122,19 +144,18 @@ class VehicleTracker:
     def update(self, frame: np.ndarray) -> None:
         """Update the tracker with a new frame."""
 
-        results: Results = self.detector.track(frame,
-                                               tracker="models/trackers/botsort.yaml",
-                                               show=False,
-                                               persist=True,
-                                               conf=self.params.get(TrackingParams.TRACKING_CONFIDENCE.key, 0.5),
-                                               iou=self.params.get(TrackingParams.TRACKING_NMS.key, 0.25),
-                                               agnostic_nms=True,
-                                               classes=[2, 7],
-                                               max_det=10,
-                                               amp=True)
-        
-        # results = self.detector(frame)[0]
-        
+        results: Results = self.detector.track(
+            frame,  
+            tracker="models/trackers/botsort.yaml",
+            show=False,
+            persist=True,
+            conf=self.params.get(TrackingParams.TRACKING_CONFIDENCE.key, 0.45),
+            iou=self.params.get(TrackingParams.TRACKING_NMS.key, 0.05),
+            agnostic_nms=True,
+            classes=[2, 7],
+            max_det=10,
+            amp=True)
+                
         # Loop over frames
         for result in results:
             # Each `result` is a `Results` object for one frame
