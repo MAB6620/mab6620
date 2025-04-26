@@ -12,7 +12,7 @@
             "console": "integratedTerminal",
             "args": [
                 "--video_file_to_process",
-                "car5.mp4"
+                "car1.mp4"
             ]
         }
     ]

@@ -1,3 +1,13 @@
+## Git Large File System
+```
+brew install git-lfs
+git lfs install
+git lfs track "*.pt"
+git lfs track "*.mp4"
+git add models/*.pt
+git add dataset/evaluation/*.mp4
+
+```
 
 ### Vehicle tracker
 

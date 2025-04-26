@@ -33,6 +33,10 @@ class Args:
     """Path to the output video folder"""
     draw_fps: bool = True
     """Whether to draw FPS on the video"""
+    scale_factor: float = 1.0
+    """Scale factor for resizing the video frames"""
+
+
 
     def overridden_args(self) -> dict:
         default_instance = Args()
@@ -69,7 +73,7 @@ def main(args: Args):
     fps = video_capture.get(cv2.CAP_PROP_FPS)
 
     # Define the codec and create VideoWriter object
-    resized_shape = (int(1 * frame_width), int(1 * frame_height))
+    resized_shape = (int(args.scale_factor * frame_width), int(args.scale_factor * frame_height))
     out = cv2.VideoWriter(output_file_path, 
                           cv2.VideoWriter_fourcc(*'mp4v'), 
                           fps, 
