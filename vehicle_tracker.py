@@ -130,15 +130,6 @@ class VehicleTracker:
         self.detector.amp = True
         self.detector.tracker = None
         
-
-        tracking_max_age = self.params.get(TrackingParams.TRACKING_MAX_AGE.key, 30)
-        self.tracker = DeepSort(max_age=tracking_max_age, 
-                                max_iou_distance=0.4, 
-                                n_init=2, 
-                                nn_budget=None,  
-                                nms_max_overlap=0.5, 
-                                max_cosine_distance=0.5,
-                                embedder="mobilenet")
         self.vehicles = {}
 
     def update(self, frame: np.ndarray) -> None:
@@ -147,7 +138,7 @@ class VehicleTracker:
         results: Results = self.detector.track(
             frame,  
             tracker="models/trackers/botsort.yaml",
-            show=False,
+            show=True,
             persist=True,
             conf=self.params.get(TrackingParams.TRACKING_CONFIDENCE.key, 0.45),
             iou=self.params.get(TrackingParams.TRACKING_NMS.key, 0.05),
@@ -180,33 +171,6 @@ class VehicleTracker:
                         self.vehicles[obj_id].update(bbox, conf)
                     else:
                         self.vehicles[obj_id] = Vehicle(obj_id, bbox, confidence=conf)
-
-
-        # detections = []
-
-        # for box in results.boxes.data:
-        #     x1, y1, x2, y2, conf, cls = box
-        #     if int(cls) == 2 or int(cls) == 7:  # Car or truck
-        #         detections.append(([int(x1), int(y1), int(x2 - x1), int(y2 - y1)], conf, 'vehicle'))
-
-        # tracks = self.tracker.update_tracks(detections, frame=frame)
-        # for track in tracks:
-        #     if not track.is_confirmed():
-        #         continue
-        #     track_id = track.track_id
-        #     ltrb = track.to_ltrb()
-        #     bbox = tuple(map(int, ltrb))
-
-        #     if track_id in self.vehicles:
-        #         self.vehicles[track_id].update(bbox, track.det_conf)
-        #     else:
-        #         self.vehicles[track_id] = Vehicle(track_id, bbox, confidence=track.det_conf)
-            
-            # Remove vehicles that have not been updated for a while
-            for vehicle in list(self.vehicles.values()):
-                if not vehicle.update_lifespan():
-                    del self.vehicles[vehicle.id]
-        
 
     def get_vehicles(self) -> list[Vehicle]:
         """Get the list of tracked vehicles."""
