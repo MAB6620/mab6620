@@ -15,7 +15,7 @@ This project implements a vehicle tracking system using YOLOv8 for object detect
 
 Python 3.8 or higher
 A system with sufficient GPU memory for YOLOv8 models (recommended for performance)
-Video files for processing (e.g., .mp4 files in the `dataset/evaluation` folder)
+Video files for processing (e.g., .mp4 files in the `datasets/evaluation` folder)
 
 **Setup**
 
@@ -48,7 +48,7 @@ pip3 install -r requirements.txt
 Download YOLOv8 Models: The project uses pretrained YOLOv8 models (`yolov8n.pt`, `yolov8s.pt`, `yolov8l.pt`). These should be placed in the `models/` folder. 
 You can download them from the Ultralytics YOLOv8 repository or use the provided models if already included.
 
-Prepare Video Files: Place your input video files (e.g., `car1.mp4`, `car2.mp4`) in the `dataset/evaluation/` folder. The provided dataset includes sample videos for testing.
+Prepare Video Files: Place your input video files (e.g., `car1.mp4`, `car2.mp4`) in the `datasets/evaluation/` folder. The provided dataset includes sample videos for testing.
 
 ### Git Large File System
 Project includes git lfs solution for storing models artifacts and video files.
@@ -59,7 +59,7 @@ git lfs install
 git lfs track "*.pt"
 git lfs track "*.mp4"
 git add models/*.pt
-git add dataset/evaluation/*.mp4
+git add datasets/evaluation/*.mp4
 
 ```
 
@@ -76,7 +76,7 @@ Uploading LFS objects: 100% (9/9), 788 MB | 12 MB/s, done.
 **Directory Structure**:
 ```
 dragonfly/
-├── dataset/
+├── datasets/
 │   └── evaluation/
 │       ├── car1.mp4
 │       ├── car2.mp4
@@ -111,7 +111,7 @@ This will process `car1.mp4` and save the output to `output/car1_output_video.mp
 
 - `--exp_name` : Experiment name (default: script name).
 - `--tag` : Optional tag for the experiment.
-- `--dataset_folder_name` : Path to the dataset folder (default: dataset/evaluation).
+- `--dataset_folder_name` : Path to the dataset folder (default: datasets/evaluation).
 - `--video_file_to_process` : Input video file name (default: car1.mp4).
 - `--video_output_file_name` : Output video file name (default: output_video.mp4).
 - `--video_output_folder_name` : Output folder (default: output).
@@ -165,6 +165,16 @@ For GPU acceleration, ensure CUDA and cuDNN are installed and compatible with yo
 - Add motion models to improve prediction during occlusion.
 - Make GPU computation possible
 
+## Preparing Dataset
+
+```
+ffmpeg -i datasets/evaluation/car1.mp4 -vf "fps=5,scale=trunc(iw/2)*2:trunc(ih/2)*2" datasets/train/car_1_image_%03d.jpg
+ffmpeg -i datasets/evaluation/car2.mp4 -vf "fps=5,scale=trunc(iw/2)*2:trunc(ih/2)*2" datasets/train/car_2_image_%03d.jpg
+ffmpeg -i datasets/evaluation/car3.mp4 -vf "fps=5,scale=trunc(iw/2)*2:trunc(ih/2)*2" datasets/train/car_3_image_%03d.jpg
+ffmpeg -i datasets/evaluation/car4.mp4 -vf "fps=5,scale=trunc(iw/2)*2:trunc(ih/2)*2" datasets/train/car_4_image_%03d.jpg
+ffmpeg -i datasets/evaluation/car5.mp4 -vf "fps=5,scale=trunc(iw/2)*2:trunc(ih/2)*2" datasets/train/car_5_image_%03d.jpg
+ffmpeg -i datasets/evaluation/car6.mp4 -vf "fps=5,scale=trunc(iw/2)*2:trunc(ih/2)*2" datasets/train/car_6_image_%03d.jpg
+```
 
 **License**
 - Copyright © 2025 Octadero. All rights reserved.

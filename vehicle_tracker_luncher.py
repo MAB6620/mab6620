@@ -23,7 +23,7 @@ class Args:
     """the name of this experiment"""
     tag: str | None = None
     """the name of this experiment"""
-    dataset_folder_name: str = "dataset/evaluation"
+    dataset_folder_name: str = "datasets/evaluation"
     """Path to the dataset folder"""
     video_file_to_process: str = "car1.mp4"
     """Path to the video file to process"""
