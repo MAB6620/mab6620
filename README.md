@@ -109,15 +109,15 @@ This will process `car1.mp4` and save the output to `output/car1_output_video.mp
 
 **Command-Line Arguments**: The script supports several configurable parameters:
 
-`--exp_name` : Experiment name (default: script name).
-`--tag` : Optional tag for the experiment.
-`--dataset_folder_name` : Path to the dataset folder (default: dataset/evaluation).
-`--video_file_to_process` : Input video file name (default: car1.mp4).
-`--video_output_file_name` : Output video file name (default: output_video.mp4).
-`--video_output_folder_name` : Output folder (default: output).
-`--draw_fps` : Display FPS on output video (default: True).
-`--different_colors` : Use unique colors for each vehicle (default: True).
-`--scale_factor` : Resize factor for video frames (default: 1.0).
+- `--exp_name` : Experiment name (default: script name).
+- `--tag` : Optional tag for the experiment.
+- `--dataset_folder_name` : Path to the dataset folder (default: dataset/evaluation).
+- `--video_file_to_process` : Input video file name (default: car1.mp4).
+- `--video_output_file_name` : Output video file name (default: output_video.mp4).
+- `--video_output_folder_name` : Output folder (default: output).
+- `--draw_fps` : Display FPS on output video (default: True).
+- `--different_colors` : Use unique colors for each vehicle (default: True).
+- `--scale_factor` : Resize factor for video frames (default: 1.0).
 
 **Example with custom parameters**:
 ```
@@ -130,13 +130,13 @@ python vehicle_tracker_luncher.py --video_file_to_process car2.mp4 --scale_facto
 **Configuration**
 The `vehicle_tracker.py` script allows customization through a params dictionary. Key parameters include:
 
-`mode`: Tracking mode (fast, balanced, accurate, slow_and_accurate).
-`model_folder`: Folder containing YOLO models (default: models).
-`tracking_max_age`: Maximum age for tracking objects (default: 30).
-`custom_model_name`: Optional custom YOLO model file.
-`tracking_confidence`: Detection confidence threshold (default: 0.5).
-`tracking_nms`: Non-max suppression threshold (default: 0.5).
-`verbose`: Enable verbose logging (default: False).
+- `mode`: Tracking mode (fast, balanced, accurate, slow_and_accurate).
+- `model_folder`: Folder containing YOLO models (default: models).
+- `tracking_max_age`: Maximum age for tracking objects (default: 30).
+- `custom_model_name`: Optional custom YOLO model file.
+- `tracking_confidence`: Detection confidence threshold (default: 0.5).
+- `tracking_nms`: Non-max suppression threshold (default: 0.5).
+- `verbose`: Enable verbose logging (default: False).
 
 Example of passing custom parameters in code:
 ```
@@ -167,8 +167,8 @@ For GPU acceleration, ensure CUDA and cuDNN are installed and compatible with yo
 
 
 **License**
-Copyright © 2025 Octadero. All rights reserved.
-Acknowledgments
+- Copyright © 2025 Octadero. All rights reserved.
+- Acknowledgments
 
-Ultralytics YOLOv8 for object detection.
-DeepSort-Realtime for object tracking.
+- Ultralytics YOLOv8 for object detection.
+- DeepSort-Realtime for object tracking.
