@@ -13,7 +13,7 @@ import random
 import tyro
 import cv2
 from datetime import datetime
-from vehicle_tracker import VehicleTracker
+from vehicle_tracker import VehicleTracker, TrackingParams, TrackingMode
 from dataclasses import dataclass, fields
 import numpy as np
 
@@ -38,8 +38,6 @@ class Args:
     scale_factor: float = 1.0
     """Scale factor for resizing the video frames"""
 
-
-
     def overridden_args(self) -> dict:
         default_instance = Args()
         return {
@@ -52,8 +50,9 @@ class Args:
 def main(args: Args):
     print(f"Overridden args: {args.overridden_args()}")
     # Initialize the tracker
-    tracker = VehicleTracker()
-
+    tracker = VehicleTracker(params={
+        TrackingParams.MODE.key : TrackingMode.FAST
+    })
 
     src_file_path = os.path.join(args.dataset_folder_name, args.video_file_to_process)
     if not os.path.exists(src_file_path):
@@ -113,7 +112,7 @@ def main(args: Args):
             x1, y1, x2, y2 = vehicle.bbox
             
             if args.different_colors:
-                random.seed(int(vehicle.id))
+                random.seed(int(vehicle.id)+10)
 
             color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
             cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)

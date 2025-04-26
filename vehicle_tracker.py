@@ -6,13 +6,11 @@
 """This is a Vehicle Tracker representation
 """
 
-import cv2
 import os
 import numpy as np
 from enum import StrEnum
 from ultralytics import YOLO
 from ultralytics.engine.results import Results
-from deep_sort_realtime.deepsort_tracker import DeepSort
 
 class TrackingMode(StrEnum):
     FAST = "fast"
@@ -25,27 +23,18 @@ class TrackingParams(StrEnum):
     MODEL_FOLDER = "model_folder"
     TRACKING_MAX_AGE = "tracking_max_age"
     CUSTOM_MODEL_NAME = "custom_model_name"
-
-    TRACKING_MODE = "tracking_mode"
     TRACKING_CONFIDENCE = "tracking_confidence"
     TRACKING_NMS = "tracking_nms"
     VERBOSE = "verbose"
-    TRACKING_MAX_DETECTIONS = "tracking_max_detections"
-    # TRACKING_MIN_HITS = "tracking_min_hits"
-    # TRACKING_IOT = "tracking_iot"
-    # TRACKING_MAX_DIST = "tracking_max_dist"
-    # TRACKING_N_INIT = "tracking_n_init"
-    # TRACKING_MAX_COSINE_DISTANCE = "tracking_max_cosine_distance"
-    # TRACKING_NMS_MAX_DETECTIONS = "tracking_nms_max_detections"
-    # TRACKING_NMS_IOU = "tracking_nms_iou"
 
+    @property
     def default(self) -> float:
         if self == TrackingParams.MODE:
             return TrackingMode.SLOW_AND_ACCURATE
         elif self == TrackingParams.MODEL_FOLDER:
             return "models"
         elif self == TrackingParams.TRACKING_MAX_AGE:
-            return 30
+            return 45
         elif self == TrackingParams.CUSTOM_MODEL_NAME:
             return None
         elif self == TrackingParams.TRACKING_CONFIDENCE:
@@ -94,18 +83,18 @@ class Vehicle:
 class VehicleTracker:
     def __init__(self, params:dict = None):
         self.params = params or {}
-        mode = TrackingMode(self.params.get(TrackingParams.MODE.key, TrackingMode.BALANCED))
-        model_folder = self.params.get(TrackingParams.MODEL_FOLDER.key, "models")
+        mode = TrackingMode(self.params.get(TrackingParams.MODE.key, TrackingParams.MODE.default))
+        model_folder = self.params.get(TrackingParams.MODEL_FOLDER.key, TrackingParams.MODEL_FOLDER.default)
 
         # Choose YOLO model based on mode
         if mode == TrackingMode.FAST:
-            model_name = "yolov8n.pt"
+            model_name = "yolov8n-best.pt"
         elif mode == TrackingMode.ACCURATE:
-            model_name = "yolov8m.pt"
+            model_name = "yolov8m-best.pt"
         elif mode == TrackingMode.SLOW_AND_ACCURATE:
-            model_name = "yolov8l.pt"
+            model_name = "yolov8l-best.pt"
         else:  # BALANCED
-            model_name = "yolov8s.pt"
+            model_name = "yolov8s-best.pt"
         
         # Check for custom model name
         # If a custom model name is provided, use it instead of the default
@@ -117,19 +106,18 @@ class VehicleTracker:
                 model_name = custom_model_name
 
         model_path = os.path.join(model_folder, model_name)
-        verbose = self.params.get(TrackingParams.VERBOSE.key, False)
+        verbose = self.params.get(TrackingParams.VERBOSE.key, TrackingParams.VERBOSE.default)
 
         self.detector = YOLO(model_path, verbose=verbose)
         self.detector.fuse()
-        self.detector.half()
-        self.detector.conf = self.params.get(TrackingParams.TRACKING_CONFIDENCE.key, 0.5)
-        self.detector.iou = self.params.get(TrackingParams.TRACKING_NMS.key, 0.5)
+        # self.detector.half()
+        self.detector.conf = self.params.get(TrackingParams.TRACKING_CONFIDENCE.key, TrackingParams.TRACKING_CONFIDENCE.default)
+        self.detector.iou = self.params.get(TrackingParams.TRACKING_NMS.key, TrackingParams.TRACKING_NMS.default)
         self.detector.agnostic_nms = True
         self.detector.classes = [2, 7]
         self.detector.max_det = 1000
         self.detector.amp = True
-        self.detector.tracker = None
-        
+
         self.vehicles = {}
 
     def update(self, frame: np.ndarray) -> None:
@@ -138,10 +126,8 @@ class VehicleTracker:
         results: Results = self.detector.track(
             frame,  
             tracker="models/trackers/botsort.yaml",
-            show=True,
+            show=False,
             persist=True,
-            conf=self.params.get(TrackingParams.TRACKING_CONFIDENCE.key, 0.45),
-            iou=self.params.get(TrackingParams.TRACKING_NMS.key, 0.05),
             agnostic_nms=True,
             classes=[2, 7],
             max_det=10,
@@ -171,6 +157,10 @@ class VehicleTracker:
                         self.vehicles[obj_id].update(bbox, conf)
                     else:
                         self.vehicles[obj_id] = Vehicle(obj_id, bbox, confidence=conf)
+            # Remove vehicles that have not been updated for a while
+            for vehicle in list(self.vehicles.values()):
+                if not vehicle.update_lifespan():
+                    del self.vehicles[vehicle.id]
 
     def get_vehicles(self) -> list[Vehicle]:
         """Get the list of tracked vehicles."""
