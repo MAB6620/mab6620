@@ -2,6 +2,11 @@
 ### Vehicle Tracker
 This project implements a vehicle tracking system using YOLOv8 for object detection and DeepSort for tracking. It processes video files to detect and track vehicles (cars and trucks), outputting a video with bounding boxes and IDs for each tracked vehicle.
 
+
+<img src="https://github.com/VolodymyrPavliukevych/dragonfly/blob/47ffb49cb6aaccb0b76835ea466d1aaf25c7fbaf/output/fast_version.gif?raw=true" alt="Drone fly simulation, screen cast." width=850 href="none"></img>
+
+--- 
+
 [![Vehicle Tracker - I](https://img.youtube.com/vi/SN6ZytJcNc8/0.jpg)](https://www.youtube.com/watch?v=SN6ZytJcNc8)
 
 ---
